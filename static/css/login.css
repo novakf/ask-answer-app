@@ -1,0 +1,10 @@
+@import './base.css';
+
+.login {
+  display: flex;
+  flex-direction: column;
+}
+
+.hint {
+  margin-top: 10px;
+}
