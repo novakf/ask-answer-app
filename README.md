@@ -1,4 +1,4 @@
-## Tecjnopark Web project
+## Technopark Web project
 
 ### Задание
 
