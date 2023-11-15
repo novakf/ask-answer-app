@@ -1,16 +1,13 @@
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseNotFound
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from . import models
 from .models import TAGS
 
 def index(request):
     questions = models.QUESTIONS
-    paginator = Paginator(questions, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginate(questions, request)
     tags = TAGS
     context = {'questions': page_obj, 'tags': tags}
     return render(request, 'index.html', context)
@@ -40,9 +37,8 @@ def settings(request):
 def ask(request):
     return render(request, 'ask.html')
 
-
 def paginate(objects_list, request, per_page=5):
     paginator = Paginator(objects_list, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return page_obj, paginator
+    return page_obj
