@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,7 +8,7 @@
       integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" type="text/css" href="../static/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Riddle</title>
@@ -21,9 +22,9 @@
     ></script>
 
     <div class="header">
-      <a href="">
+      <a href="/?tab=new">
         <div class="logo-container">
-          <img class="logo" src="../static/assets/logo-dark.png" />
+          <img class="logo" src="{% static "assets/logo-dark.png" %}" />
         </div>
       </a>
       <input
@@ -36,12 +37,13 @@
       <div class="user-container">
         <a href="">
           <div class="avatar-container">
-            <img class="avatar" src="../static/assets/profile-image.jpg" /></div
-        ></a>
+            <img class="avatar" src="{% static "assets/profile-image.jpg" %}" />
+          </div></a
+        >
         <div class="user-info">
           <div class="user-name">John Snow</div>
           <div class="user-action">
-            <a href="">Settings</a>
+            <a href="/settings">Settings</a>
             <a href="">Log out</a>
           </div>
         </div>
@@ -49,50 +51,7 @@
     </div>
 
     <div class="page-content">
-      <div class="main">
-        <h2 class="title">Registration</h2>
-        <p class="text-danger">Sorry, this email address already registered!</p>
-        <form class="col-sm-6">
-          <div class="mb-3">
-            <label for="inputLogin" class="form-label">Login</label>
-            <input
-              type="text"
-              class="form-control"
-              id="inputLogin"
-              placeholder="User"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="inputEmail" class="form-label">Email</label>
-            <input
-              type="email"
-              class="form-control"
-              id="inputEmail"
-              placeholder="name@example.org"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="inputPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="inputPassword" />
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label"
-              >Repeat password</label
-            >
-            <input
-              type="password"
-              class="form-control"
-              id="exampleInputPassword1"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="inputFile" class="col-form-label">Upload Avatar</label>
-            <input type="file" class="file-input" id="inputFile" />
-            <div class="invalid-feedback">Invalid file feedback</div>
-          </div>
-          <button type="submit" class="button">Register</button>
-        </form>
-      </div>
+      <div class="main">{% block content %} {% endblock content %}</div>
       <div class="info-column">
         <div class="tags-container">
           <div class="title">Popular tags</div>
@@ -120,7 +79,7 @@
     </div>
 
     <footer class="footer">
-      <img class="logo" src="../static/assets/logo-light.png" />
+      <img class="logo" src="{% static "assets/logo-light.png" %}" />
       <div>©2023</div>
     </footer>
   </body>
