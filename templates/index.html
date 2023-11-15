@@ -3,7 +3,7 @@
 {% block content %}
 <div>
   <div class="top-container">
-    <div class="main-title">New Questions</div>
+    <div class="main-title">{% if request.GET.tab != "hot" %} New {% else %} Hot {% endif %}Questions</div>
     <div class="sorting-panel">
       {% if request.GET.tab != "hot" %}
         <a class="sorting-type disabled-type" href="/?tab=hot">Most liked</a>
