@@ -1,0 +1,32 @@
+@import "./base.css";
+
+.form-label {
+  font-size: 18px;
+}
+
+.question-form {
+  width: 100%;
+}
+
+.ask-button {
+  background: #1300bb;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 16px;
+
+  &:hover {
+    background: #1c2fd6;
+  }
+
+  &:active {
+    background: #2b3ff0;
+  }
+}
+
+.ask-form {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #b5b5b5;
+}
