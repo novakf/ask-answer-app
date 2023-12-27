@@ -1,0 +1,80 @@
+{% extends "common/base.html" %} 
+
+{% block content %}
+{%load static%}
+<div class="open-question-container">
+  <div class="profile-info">
+    <a class="avatar-container author-avatar">
+      <img class="avatar" src="{% static "assets/profile-image.jpg" %}" />
+    </a>
+    <div class="like-container">
+      <svg
+        class="like-button"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24px"
+        height="24px"
+        viewBox="0 0 24 24"
+        fill="#0a58ca"
+      >
+        <path
+          d="M12 6V18M12 6L7 11M12 6L17 11"
+          stroke="#000000"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <div class="like-count">{{question.rating}}</div>
+      <svg
+        class="like-button"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24px"
+        height="24px"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 6V18M12 18L7 13M12 18L17 13"
+          stroke="#000000"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+  </div>
+  <div class="question-body">
+    <a class="question-title"> {{question.title}} </a>
+    <div>
+      {{question.text}}
+    </div>
+    <div class="answer-action">
+      <div class="answer-tags">
+        <div class="answer-tags-title">Tags: &nbsp;</div>
+        <div class="answer-tags-list">
+          {% for tag in tags %}
+            <a href="" class="question-tag">{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="answers-list">
+  {% for answer in answers %}
+    {% include "common/answerItem.html" %}
+  {% endfor %}
+</div>
+<div class="ask-form">
+  <form>
+    <div class="mb-3">
+      <textarea
+        class="form-control"
+        id="enterAnswer"
+        placeholder="Enter your answer"
+        rows="3"
+      ></textarea>
+    </div>
+    <input class="button" type="submit" value="Answer" />
+  </form>
+</div>
+{% endblock content %}

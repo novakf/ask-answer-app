@@ -1,0 +1,30 @@
+{% extends "common/base.html" %}
+
+{% block content%}
+<div class="main-title">New Question</div>
+<form class="question-form" action="">
+  <div class="mb-3">
+    <label for="title" class="form-label">Title</label>
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      placeholder="e.g. how to ride a snowboard"
+    />
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea class="form-control" id="description" rows="3"></textarea>
+  </div>
+  <div class="mb-3">
+    <label for="tags" class="form-label">Tags</label>
+    <input
+      type="text"
+      class="form-control"
+      id="tags"
+      placeholder="e.g. snow, winter"
+    />
+  </div>
+  <input class="ask-button" type="submit" value="Ask question" />
+</form>
+{% endblock content%} 

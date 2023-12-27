@@ -1,4 +1,4 @@
-@import './base.css';
+@import "./base.css";
 
 .main-title {
   font-size: 30px;
@@ -48,6 +48,7 @@
   display: flex;
   flex-direction: column;
   margin-left: 10px;
+  width: 100%;
 }
 
 .question-title {
@@ -78,6 +79,7 @@
 
   &:hover {
     transform: scale(1.1);
+    background: #f5f5f5;
   }
 
   &:active {
@@ -88,9 +90,9 @@
 .question-action {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 10px;
   align-items: center;
   justify-content: space-between;
+  margin-top: auto;
 }
 
 .question-answers {
@@ -118,6 +120,11 @@
   flex-wrap: wrap;
 }
 
+.question-tag:is(:not(:last-child))::after {
+  color: #000;
+  content: " | ";
+}
+
 .question-tags-list {
   display: flex;
   gap: 5px;
@@ -142,16 +149,24 @@
   gap: 10px;
 }
 
-.sorting-type-active {
+.sorting-type {
   cursor: pointer;
+}
+
+.active-type {
   color: black;
   border-bottom: 1px solid;
+
+  &:hover {
+    color: #333333;
+  }
 }
 
-.sorting-type-disabled {
-  cursor: pointer;
+.disabled-type {
   color: rgba(0, 0, 0, 0.253);
   border-bottom: none;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.507);
+  }
 }
-
-

@@ -1,4 +1,4 @@
-@import './base.css';
+@import "./base.css";
 
 .main-title {
   font-size: 30px;
@@ -79,9 +79,11 @@
 .like-button {
   cursor: pointer;
   transition: transform 0.3s;
+  border-radius: 50%;
 
   &:hover {
     transform: scale(1.1);
+    background: #f5f5f5;
   }
 
   &:active {
@@ -162,4 +164,3 @@
   display: flex;
   gap: 10px;
 }
-
