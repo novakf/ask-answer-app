@@ -40,5 +40,7 @@ def ask(request):
 def paginate(objects_list, request, per_page=5):
     paginator = Paginator(objects_list, per_page)
     page_number = request.GET.get('page')
+    if type(page_number) is str:
+      return HttpResponseNotFound('Invalid page number')
     page_obj = paginator.get_page(page_number)
     return page_obj
