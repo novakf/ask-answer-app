@@ -49,7 +49,7 @@
       <div class="question-tags">
         <div class="question-tags-title">Tags: &nbsp;</div>
         <div class="question-tags-list">
-          {% for tag in tags %}
+          {% for tag in question.tag.all %}
             <a href="{% url "tag" tag.name %}" class="question-tag">{{ tag.name }}</a>
           {% endfor %}
         </div>

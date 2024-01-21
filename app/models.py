@@ -20,11 +20,11 @@ class QuestionManager(models.Manager):
         return Answer.objects.filter(question=id).all()
 
     def newFilter(self):
-        questions = self.annotate(answers_count=Count('answer')).order_by('-created_at')
+        questions = self.annotate(answers_count=Count('answer')).prefetch_related('author', 'tag').order_by('-created_at')
         return questions
 
     def hotFilter(self):
-        questions = Question.objects.annotate(answers_count=Count('answer')).order_by('-rating')
+        questions = Question.objects.annotate(answers_count=Count('answer')).prefetch_related('author', 'tag').order_by('-rating')
         return questions
 
     def countQuestions(self):
