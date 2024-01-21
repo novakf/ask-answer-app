@@ -71,7 +71,9 @@ def ask(request):
 def paginate(objects_list, request, per_page=5):
     paginator = Paginator(objects_list, per_page)
     page_number = request.GET.get('page')
-    if page_number != None and (re.search(r'[A-z]', page_number) or int(page_number) > paginator.num_pages or int(page_number) < 1):
+    if page_number != None and re.search(r'[A-z]', page_number):
         raise Http404
+    if int(page_number) < 1:
+        page_number = 1
     page_obj = paginator.get_page(page_number)
     return page_obj
