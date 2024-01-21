@@ -74,8 +74,8 @@ class Command(BaseCommand):
 
         self.stdout.write("REACTIONS COMPLETE\n")
 
-        for index, q in enumerate(models.Profile.objects.all()):
-            q.countRating()
-            q.save()
+        for index, p in enumerate(models.Profile.objects.all()):
+            p.countRating()
+            p.save()
 
         self.stdout.write("DONE")

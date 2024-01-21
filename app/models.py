@@ -33,12 +33,12 @@ class QuestionManager(models.Manager):
 
 class TagManager:
     def mostPopular():
-        return Tag.objects.annotate(num_questions=Count('question')).order_by('-num_questions')[:5]
+        return Tag.objects.annotate(num_questions=Count('question')).order_by('-num_questions')[:7]
 
 
 class ProfileManager:
     def mostPopular():
-        return Profile.objects.order_by('-rating')
+        return Profile.objects.order_by('-rating')[:5]
 
 
 class Tag(models.Model):
@@ -92,9 +92,8 @@ class Profile(models.Model):
     objects = ProfileManager()
 
     def countRating(self):
-        answers = Answer.objects.filter(
-            author=self.user).annotate(count=Count('rating'))
-        self.rating = answers.count
+        answers_count = Answer.objects.filter(author=self.user).count()
+        self.rating = answers_count
 
 
 class Reaction(models.Model):

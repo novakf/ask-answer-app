@@ -13,7 +13,7 @@ def index(request):
         questions = models.Question.objects.newFilter()
     page_obj = paginate(questions, request)
     tags = models.TagManager.mostPopular()
-    best_users = models.Profile.objects.all()
+    best_users = models.ProfileManager.mostPopular()
     context = {'questions': page_obj, 'tags': tags, 'best_members': best_users}
     return render(request, 'index.html', context)
 
@@ -21,33 +21,26 @@ def index(request):
 def tag(request, tag_name):
     questions = models.Question.objects.tagFilter(tag_name)
     tags = models.TagManager.mostPopular()
-
     if questions:
         paginator = Paginator(questions, per_page=5)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
     else:
         page_obj = None
-
-    best_users = models.Profile.objects.all()
-
-    context = {'questions': page_obj,
-               'tags': tags,
-               'tag': tag_name,
-               'best_members': best_users
-               }
+    best_users = models.ProfileManager.mostPopular()
+    context = {'questions': page_obj, 'tags': tags,
+               'tag': tag_name, 'best_members': best_users}
     return render(request, 'tag.html', context)
 
 
 def question(request, question_id):
     tags = models.TagManager.mostPopular()
-    best_users = models.Profile.objects.all()
+    best_users = models.ProfileManager.mostPopular()
     question_id = int(question_id)
     question = models.Question.objects.getById(question_id)
     answers = models.Question.objects.getAnswers(question_id)
     page_obj = paginate(answers, request)
-    context = {'question': question,
-               'answers': page_obj,
+    context = {'question': question, 'answers': page_obj,
                'tags': tags, 'best_members': best_users}
     return render(request, "question.html", context)
 
@@ -73,7 +66,7 @@ def paginate(objects_list, request, per_page=5):
     page_number = request.GET.get('page')
     if page_number != None and re.search(r'[A-z]', page_number):
         raise Http404
-    if int(page_number) < 1:
+    if page_number != None and int(page_number) < 1:
         page_number = 1
     page_obj = paginator.get_page(page_number)
     return page_obj
