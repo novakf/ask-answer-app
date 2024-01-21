@@ -1,7 +1,7 @@
 TAGS = [
     {
         'id': i,
-        'name': f'Tag {i}',
+        'name': f'Tag{i}',
     } for i in range(3)
 ]
 
