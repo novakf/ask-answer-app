@@ -23,6 +23,18 @@ services:
         limits:
           cpus: '3'
           memory: 4G
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    command: server --console-address :9001 /data
 
 volumes:
   postgres-data: {}
+  minio-data: {}

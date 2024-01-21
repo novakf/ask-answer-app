@@ -2,15 +2,19 @@ from django.shortcuts import render
 from django.http import HttpResponseNotFound, Http404
 from django.core.paginator import Paginator
 from . import models
-from .models import TAGS
 import re
 
 
 def index(request):
-    questions = models.QUESTIONS
+    filter_param = request.GET.get('tab')
+    if filter_param == 'hot':
+        questions = models.Question.objects.hotFilter()
+    else:
+        questions = models.Question.objects.newFilter()
     page_obj = paginate(questions, request)
-    tags = TAGS
-    context = {'questions': page_obj, 'tags': tags}
+    tags = models.TagManager.mostPopular()
+    best_users = models.Profile.objects.all()
+    context = {'questions': page_obj, 'tags': tags, 'best_members': best_users}
     return render(request, 'index.html', context)
 
 

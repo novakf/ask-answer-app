@@ -2,7 +2,7 @@
 <div class="question-container">
   <div class="profile-info">
     <a class="avatar-container">
-      <img class="avatar" src="{% static "assets/profile-image.jpg" %}" />
+      <img class="avatar" src="{% static "assets/default-profile-image.jpg" %}" />
     </a>
     <div class="like-container">
       <svg
@@ -40,7 +40,10 @@
     </div>
   </div>
   <div class="question-body">
-    <a href="{% url "question" question.id %}" class="question-title">{{ question.title }}</a>
+    <div class="first-line">
+      <a href="{% url "question" question.id %}" class="question-title">{{ question.title }}</a>
+      <div class="date">{{ question.created_at }}</div>
+    </div>
     <div class="question-description">{{ question.text }}</div>
     <div class="question-action">
       <div class="question-tags">
