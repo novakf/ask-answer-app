@@ -19,32 +19,37 @@ def index(request):
 
 
 def tag(request, tag_name):
-    questions = models.QUESTIONS
-    tags = TAGS
-    if not questions:
-        return HttpResponseNotFound('Invalid tag question')
-    paginator = Paginator(questions, per_page=5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    questions = models.Question.objects.tagFilter(tag_name)
+    tags = models.TagManager.mostPopular()
+
+    if questions:
+        paginator = Paginator(questions, per_page=5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    else:
+        page_obj = None
+
+    best_users = models.Profile.objects.all()
 
     context = {'questions': page_obj,
                'tags': tags,
-               'tag': tag_name
+               'tag': tag_name,
+               'best_members': best_users
                }
     return render(request, 'tag.html', context)
 
 
 def question(request, question_id):
-    try:
-        question_id = int(question_id)
-        if question_id >= len(models.QUESTIONS):
-            return HttpResponseNotFound('Invalid question ID')
-        context = {'question': models.QUESTIONS[question_id],
-                   'answers': models.ANSWERS,
-                   'tags': models.TAGS}
-        return render(request, "question.html", context)
-    except ValueError:
-        return HttpResponseNotFound('Invalid question ID')
+    tags = models.TagManager.mostPopular()
+    best_users = models.Profile.objects.all()
+    question_id = int(question_id)
+    question = models.Question.objects.getById(question_id)
+    answers = models.Question.objects.getAnswers(question_id)
+    page_obj = paginate(answers, request)
+    context = {'question': question,
+               'answers': page_obj,
+               'tags': tags, 'best_members': best_users}
+    return render(request, "question.html", context)
 
 
 def signup(request):

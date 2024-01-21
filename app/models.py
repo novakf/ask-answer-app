@@ -1,28 +1,31 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count
-
+from django.core.exceptions import ObjectDoesNotExist
 
 class QuestionManager(models.Manager):
     def getById(self, id):
-        question = Question.objects.get(id=id)
+        question = Question.objects.annotate(answers_count=Count('answer')).get(id=id)
         return question
 
     def tagFilter(self, tag_name):
-        tag = Tag.objects.get(name=tag_name)
-        return self.filter(tag=tag).order_by('-created_at')
+        try:
+          tag = Tag.objects.get(name=tag_name)
+        except ObjectDoesNotExist:
+          return None
+        questions = self.filter(tag=tag)
+        return questions.order_by('-created_at')
+        
+    def getAnswers(self, id):
+        return Answer.objects.filter(question=id).all()
 
     def newFilter(self):
-        questions = self.order_by('-created_at')
+        questions = self.annotate(answers_count=Count('answer')).order_by('-created_at')
         return questions
 
     def hotFilter(self):
-        questions = Question.objects.order_by('-rating')
+        questions = Question.objects.annotate(answers_count=Count('answer')).order_by('-rating')
         return questions
-
-    def answersCount(self):
-        count = Answer.objects.filter(Question=self).count()
-        return count
 
     def countQuestions(self):
         return self.count()
@@ -89,7 +92,8 @@ class Profile(models.Model):
     objects = ProfileManager()
 
     def countRating(self):
-        answers = Answer.objects.filter(author=self.user).annotate(count=Count('rating'))
+        answers = Answer.objects.filter(
+            author=self.user).annotate(count=Count('rating'))
         self.rating = answers.count
 
 

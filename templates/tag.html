@@ -6,9 +6,13 @@
     <div class="main-title">Tag: {{ tag }}</div>
   </div>
   <div class="questions-list">
-    {% for question in questions %}
-      {% include "common/questionItem.html" %}
-    {% endfor %}
+    {% if questions %}
+      {% for question in questions %}
+        {% include "common/questionItem.html" %}
+      {% endfor %}
+    {% else %}
+      <div>Questions not found</div>
+    {% endif %}
   </div>
   {% include "common/pagination.html" with questions=questions %}
 </div>
