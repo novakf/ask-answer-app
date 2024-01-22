@@ -1,9 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponseNotFound, Http404
+from django.shortcuts import redirect, render
+from django.http import Http404
 from django.core.paginator import Paginator
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
+from django.urls import reverse
+from app import forms
 from . import models
 import re
-
 
 def index(request):
     filter_param = request.GET.get('tab')
@@ -44,19 +48,41 @@ def question(request, question_id):
                'tags': tags, 'best_members': best_users}
     return render(request, "question.html", context)
 
+def log_out(request):
+    logout(request)
+    return redirect(reverse('login'))
 
 def signup(request):
     return render(request, 'signup.html')
 
 
-def login(request):
-    return render(request, 'login.html')
+@csrf_protect
+def log_in(request):
+    if request.method == "GET":
+      login_form = forms.LoginForm(request.GET)
+    if request.method == "POST":
+      login_form = forms.LoginForm(request.POST)
+      if login_form.is_valid():
+          user = authenticate(request=request, **login_form.cleaned_data)
+          if user is not None:
+              login(request, user)
+              if (request.POST.get('continue')):
+                  return redirect(request.POST.get('continue'))
+              else:
+                  return redirect('index')
+          login_form.add_error(None, "Wrong password or user does not exist")
+
+    tags = models.TagManager.mostPopular()
+    best_users = models.ProfileManager.mostPopular()
+    context = {'tags': tags, 'best_members': best_users, 'form': login_form}
+    return render(request, 'login.html', context=context)
 
 
 def settings(request):
     return render(request, 'settings.html')
 
 
+@login_required(login_url='/login', redirect_field_name='continue')
 def ask(request):
     return render(request, 'ask.html')
 

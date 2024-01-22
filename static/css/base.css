@@ -75,14 +75,16 @@ a {
   border-radius: 7px;
   padding: 5px 10px;
   font-size: 16px;
+}
 
-  &:hover {
-    background: #1c2fd6;
-  }
+.button:hover {
+  background: #1c2fd6;
+  color: #fff;
+}
 
-  &:active {
-    background: #2b3ff0;
-  }
+.button:active {
+  background: #2b3ff0;
+  color: #fff;
 }
 
 .avatar-container {
@@ -136,7 +138,7 @@ a {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 716px; 
+  min-height: 716px;
 
   @media (min-width: 575px) {
     width: 70%;
@@ -168,6 +170,14 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+}
+
+.logout {
+  transition: 0.2s;
+}
+
+.logout:hover {
+  color: red;
 }
 
 .tag-button {
