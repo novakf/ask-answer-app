@@ -37,7 +37,7 @@
       <div class="user-container">
         <a href="">
           <div class="avatar-container">
-            <img class="avatar" src="{% static "assets/profile-image.jpg" %}" />
+            <img class="avatar" src="{% static "assets/default-avatar.jpg" %}" />
           </div></a
         >
         <div class="user-info">
@@ -56,23 +56,17 @@
         <div class="tags-container">
           <div class="title">Popular tags</div>
           <div class="tags">
-            <button class="tag-button" style="color: red">perl</button>
-            <button class="tag-button" style="color: green">MySQL</button>
-            <button class="tag-button" style="color: blue">C++</button>
-            <button class="tag-button" style="color: yellow; font-weight: bold">
-              JS
-            </button>
-            <button class="tag-button" style="color: cadetblue">React</button>
+            {% for tag in tags %}
+              <a href="{% url "tag" tag.name %}" class="tag-button" style="color: blue">{{ tag.name }}</a>
+            {% endfor %}
           </div>
         </div>
         <div class="members-container">
           <div class="title">Best members</div>
           <div class="top-members">
-            <a class="member">Walter White</a>
-            <a class="member">Batman</a>
-            <a class="member">Ryan Gosling</a>
-            <a class="member">Joe</a>
-            <a class="member">Thomas Shelby</a>
+            {% for member in best_members %}
+              <a class="member">{{ member.user }}</a>
+            {% endfor %}
           </div>
         </div>
       </div>
@@ -80,7 +74,7 @@
 
     <footer class="footer">
       <img class="logo" src="{% static "assets/logo-light.png" %}" />
-      <div>©2023</div>
+      <div>©2024</div>
     </footer>
   </body>
 </html>

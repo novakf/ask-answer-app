@@ -60,7 +60,17 @@
 .answer-body {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   margin-left: 10px;
+}
+
+.first-line {
+  display: flex;
+  justify-content: space-between;
+}
+
+.date {
+  color: #737373;
 }
 
 .answer-title {
