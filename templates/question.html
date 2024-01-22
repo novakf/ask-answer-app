@@ -65,6 +65,8 @@
   {% endfor %}
 </div>
 {% include "common/pagination.html" with questions=answers %}
+
+{% if current_user.username %}
 <div class="ask-form">
   <form>
     <div class="mb-3">
@@ -78,4 +80,6 @@
     <input class="button" type="submit" value="Answer" />
   </form>
 </div>
+{% endif %}
+
 {% endblock content %}

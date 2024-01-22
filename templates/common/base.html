@@ -36,18 +36,25 @@
       />
       <a href="{% url "ask" %}" class='button' style="margin-left: 15px;">ASK</a>
       <div class="user-container">
+        {% if current_user.username %}
         <a href="">
           <div class="avatar-container">
             <img class="avatar" src="{% static "assets/default-avatar.jpg" %}" />
           </div></a
         >
         <div class="user-info">
-          <div class="user-name">John Snow</div>
+          <div class="user-name">{{ current_user.username }}</div>
           <div class="user-action">
             <a href="/settings">Settings</a>
             <a href="{% url "logout" %}" class="logout">Log out</a>
           </div>
         </div>
+        {% else %}
+        <div class="user-action">
+          <a href="{% url "login" %}" style="text-decoration: none;"><button class="login-btn">Login</button></a>
+          <a href="{% url "signup" %}" style="text-decoration: none;"><button class="signup-btn">Signup</button></a>
+        </div>
+        {% endif %}
       </div>
     </div>
 

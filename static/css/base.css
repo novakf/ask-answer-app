@@ -68,6 +68,42 @@ a {
   }
 }
 
+.user-action {
+  display: flex;
+  gap: 10px;
+}
+
+.login-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s;
+  border-radius: 14px;
+  padding: 5px 14px 7px 14px;
+  height: 100%;
+}
+
+.login-btn:hover {
+  background: #efefef;
+}
+
+.signup-btn {
+  background: #0064ff;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #fff;
+  padding: 5px 14px 7px 14px;
+  transition: all 0.2s;
+  height: 100%;
+}
+
+.signup-btn:hover {
+  background: #0042a7;
+}
+
 .button {
   background: #1300bb;
   color: #fff;
@@ -90,10 +126,10 @@ a {
 .avatar-container {
   display: flex;
   align-items: center;
-  border-radius: 50%;
+  border-radius: 23px;
   border: 1px solid #d5d5d5;
-  height: 40px;
-  width: 40px;
+  height: 46px;
+  width: 46px;
   overflow: hidden;
   background: rgb(224, 224, 224);
 }

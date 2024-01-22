@@ -18,7 +18,8 @@ def index(request):
     page_obj = paginate(questions, request)
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    context = {'questions': page_obj, 'tags': tags, 'best_members': best_users}
+    print(request.user)
+    context = {'questions': page_obj, 'tags': tags, 'best_members': best_users, 'current_user': request.user}
     return render(request, 'index.html', context)
 
 
@@ -33,7 +34,7 @@ def tag(request, tag_name):
         page_obj = None
     best_users = models.ProfileManager.mostPopular()
     context = {'questions': page_obj, 'tags': tags,
-               'tag': tag_name, 'best_members': best_users}
+               'tag': tag_name, 'best_members': best_users, 'current_user': request.user}
     return render(request, 'tag.html', context)
 
 
@@ -45,21 +46,36 @@ def question(request, question_id):
     answers = models.Question.objects.getAnswers(question_id)
     page_obj = paginate(answers, request)
     context = {'question': question, 'answers': page_obj,
-               'tags': tags, 'best_members': best_users}
+               'tags': tags, 'best_members': best_users, 'current_user': request.user}
     return render(request, "question.html", context)
 
 def log_out(request):
     logout(request)
-    return redirect(reverse('login'))
+    return redirect(reverse('index'))
 
-def signup(request):
-    return render(request, 'signup.html')
+def sign_up(request):
+    if request.method == "GET":
+      signup_form = forms.RegistrationForm()
+    if request.method == "POST":
+      signup_form = forms.RegistrationForm(request.POST)
+      if signup_form.is_valid():
+          user = signup_form.save()
+          if user is not None:
+              login(request, user)
+              return redirect('index')
+          
+          signup_form.add_error(None, "User saving error")
+
+    tags = models.TagManager.mostPopular()
+    best_users = models.ProfileManager.mostPopular()
+    context = {'tags': tags, 'best_members': best_users, 'form': signup_form, 'current_user': request.user}
+    return render(request, 'signup.html', context=context)
 
 
 @csrf_protect
 def log_in(request):
     if request.method == "GET":
-      login_form = forms.LoginForm(request.GET)
+      login_form = forms.LoginForm()
     if request.method == "POST":
       login_form = forms.LoginForm(request.POST)
       if login_form.is_valid():
@@ -74,7 +90,7 @@ def log_in(request):
 
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    context = {'tags': tags, 'best_members': best_users, 'form': login_form}
+    context = {'tags': tags, 'best_members': best_users, 'form': login_form, 'current_user': request.user}
     return render(request, 'login.html', context=context)
 
 
@@ -84,7 +100,10 @@ def settings(request):
 
 @login_required(login_url='/login', redirect_field_name='continue')
 def ask(request):
-    return render(request, 'ask.html')
+    tags = models.TagManager.mostPopular()
+    best_users = models.ProfileManager.mostPopular()
+    context = {'tags': tags, 'best_members': best_users, 'current_user': request.user}
+    return render(request, 'ask.html', context=context)
 
 
 def paginate(objects_list, request, per_page=5):
