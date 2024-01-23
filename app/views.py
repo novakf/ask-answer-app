@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 from app import forms
+from django.contrib.auth.models import User
 from . import models
 import re
 
@@ -93,9 +94,23 @@ def log_in(request):
     context = {'tags': tags, 'best_members': best_users, 'form': login_form, 'current_user': request.user}
     return render(request, 'login.html', context=context)
 
-
+@login_required(login_url='/login', redirect_field_name='continue')
 def settings(request):
-    return render(request, 'settings.html')
+    user = models.User.objects.get(username=request.user.username)
+    data = {'username': user.username, "email": user.email}
+    if request.method == "GET":
+      settings_form = forms.ProfileEditForm(initial=data)
+    if request.method == "POST":
+      settings_form = forms.ProfileEditForm(request.POST)
+      if settings_form.is_valid():
+            user = settings_form.save(request)
+            print(user)
+            return redirect(reverse('settings'))
+            
+    tags = models.TagManager.mostPopular()
+    best_users = models.ProfileManager.mostPopular()
+    context = {'tags': tags, 'best_members': best_users, 'form': settings_form, 'current_user': request.user}
+    return render(request, 'settings.html', context=context)
 
 
 @login_required(login_url='/login', redirect_field_name='continue')

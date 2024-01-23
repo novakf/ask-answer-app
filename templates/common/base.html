@@ -21,7 +21,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <div class="header">
+    <div id="header">
       <a href="/?tab=new">
         <div class="logo-container">
           <img class="logo" src="{% static "assets/logo-dark.png" %}" />
@@ -58,8 +58,16 @@
       </div>
     </div>
 
-    <div class="page-content">
-      <div class="main">{% block content %} {% endblock content %}</div>
+    <div class="content">
+      <div class="main">
+      {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
+      {% block content %} {% endblock content %}</div>
       <div class="info-column">
         <div class="tags-container">
           <div class="title">Popular tags</div>
