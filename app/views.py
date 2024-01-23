@@ -38,16 +38,26 @@ def tag(request, tag_name):
                'tag': tag_name, 'best_members': best_users, 'current_user': request.user}
     return render(request, 'tag.html', context)
 
-
 def question(request, question_id):
+    if request.method == 'GET':
+        answer_form = forms.AnswerForm()
+    else:
+        answer_form = forms.AnswerForm(request.POST)
+        if answer_form.is_valid():
+            answer_form.save(request, question_id)
+            answers = models.AnswerManager.mostPopular(question_id)
+            page_obj = paginate(answers, request)
+            return redirect(f'/question/{question_id}/?page={page_obj.paginator.num_pages}')
+        else:
+            answer_form.add_error("Invalid arguments")
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
     question_id = int(question_id)
     question = models.Question.objects.getById(question_id)
-    answers = models.Question.objects.getAnswers(question_id)
+    answers = models.AnswerManager.mostPopular(question_id)
     page_obj = paginate(answers, request)
     context = {'question': question, 'answers': page_obj,
-               'tags': tags, 'best_members': best_users, 'current_user': request.user}
+               'tags': tags, 'best_members': best_users, 'current_user': request.user, 'form': answer_form}
     return render(request, "question.html", context)
 
 @login_required

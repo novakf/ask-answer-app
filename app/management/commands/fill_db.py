@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
         tags = []
         for i in range(ratio):
-            tag = models.Tag(name=fake.word())
+            tag = models.Tag(name=fake.unique.word())
             tags.append(tag)
         models.Tag.objects.bulk_create(tags)
         self.stdout.write("TAGS COMPLETE\n")
@@ -54,10 +54,17 @@ class Command(BaseCommand):
             question.tag.add(random.choice(tags))
         self.stdout.write("QUESTIONS COMPLETE\n")
 
+        used_questions = []
         answers = []
         for i in range(ratio * 100):
-            answer = models.Answer(text=fake.text(), question=random.choice(
-                questions), author=random.choice(users), is_correct=random.choice([True, False]))
+            curr_question = questions[i % (ratio*10)]
+            if curr_question in used_questions:
+                correct = False
+            else:
+                correct = True
+                used_questions.append(curr_question)
+            
+            answer = models.Answer(text=fake.text(), question=curr_question, author=random.choice(users), is_correct=correct)
             answers.append(answer)
         models.Answer.objects.bulk_create(answers)
         self.stdout.write("ANSWERS COMPLETE\n")

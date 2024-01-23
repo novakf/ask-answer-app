@@ -22,7 +22,7 @@
           stroke-linejoin="round"
         />
       </svg>
-      <div class="like-count">10</div>
+      <div class="like-count">{{ answer.rating }}</div>
       <svg
         class="like-button"
         xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +45,22 @@
       {{answer.text}}
     </div>
     <div class="answer-action">
-      <div class="correct-box">Correct <input type="checkbox" /></div>
+      {% if current_user.id == question.author.id %}
+          
+          <label class="form-check-label right-answer-check px-1" for="flexCheckIndeterminateDisabled">
+              {% if answer.is_correct == True %} Correct! {% else %} Correct? {% endif %}
+          </label>
+          <input class="form-check-input ps-1" type="checkbox" value="" id="flexCheckDefault"
+                  {% if answer.is_correct == True %} checked {% endif %}>
+      {% else %}
+          {% if answer.is_correct == True %}
+              <label class="form-check-label right-answer-check px-1" for="flexCheckIndeterminateDisabled">
+                  Correct!
+              </label>
+              <input class="form-check-input ps-1" type="checkbox" value="" id="flexCheckDefault" checked
+                     disabled style="display: none;">
+          {% endif %}
+      {% endif %}
     </div>
   </div>
 </div>

@@ -86,3 +86,20 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = models.Question
         fields = ['title', 'text', 'tags']
+
+class AnswerForm(forms.Form):
+    answer = forms.CharField(required=True, max_length=500,
+                             widget=forms.Textarea(attrs={'placeholder': 'Enter an answer...'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['answer'].label = ''
+
+    def save(self, request, question_id):
+        user = models.User.objects.get(username=request.user)
+        question = models.Question.objects.get(id=question_id)
+        answer = self.cleaned_data['answer']
+      
+        answer_obj = models.Answer.objects.create(text=answer, question=question, author=user)
+        messages.success(request, 'Thanks for your answer!')
+        return answer_obj

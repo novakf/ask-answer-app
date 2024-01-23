@@ -105,8 +105,8 @@
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
-  align-items: center;
   justify-content: space-between;
+  align-items: stretch;
 }
 
 .answer-answers {
