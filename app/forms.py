@@ -27,7 +27,9 @@ class RegistrationForm(forms.ModelForm):
         
     def save(self, **kwargs):
         self.cleaned_data.pop('password_check')
-        return models.User.objects.create_user(**self.cleaned_data)
+        user = models.User.objects.create_user(**self.cleaned_data)
+        models.Profile.objects.create(user=user, avatar='users/default-avatar.jpg')
+        return user
     
 class ProfileEditForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
