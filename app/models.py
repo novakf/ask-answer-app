@@ -73,9 +73,9 @@ class Question(models.Model):
     objects = QuestionManager()
 
     def countRating(self):
-        likes_count = Reaction.objects.filter(
+        likes_count = QuestionReaction.objects.filter(
             is_positive=True, question=self).count()
-        dislikes_count = Reaction.objects.filter(
+        dislikes_count = QuestionReaction.objects.filter(
             is_positive=False, question=self).count()
         self.rating = likes_count - dislikes_count
 
@@ -90,17 +90,22 @@ class Answer(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
     def countRating(self):
-        likes_count = Reaction.objects.filter(
+        likes_count = AnswerReaction.objects.filter(
             is_positive=True, answer=self).count()
-        dislikes_count = Reaction.objects.filter(
+        dislikes_count = AnswerReaction.objects.filter(
             is_positive=False, answer=self).count()
         self.rating = likes_count - dislikes_count
 
     objects = AnswerManager()
 
-class Reaction(models.Model):
-    is_positive = models.BooleanField(default=False)
+class AnswerReaction(models.Model):
+    is_positive = models.BooleanField(default=True)
 
     user = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=False)
+
+class QuestionReaction(models.Model):
+    is_positive = models.BooleanField(default=True)
+
+    user = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=False)

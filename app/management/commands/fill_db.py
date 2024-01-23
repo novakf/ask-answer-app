@@ -69,15 +69,20 @@ class Command(BaseCommand):
         models.Answer.objects.bulk_create(answers)
         self.stdout.write("ANSWERS COMPLETE\n")
 
-        reactions = []
+        questionReactions = []
+        answerReactions = []
         for i in range(ratio * 200):
-            reaction = models.Reaction(user=random.choice(profiles), is_positive=random.choice([True, False]))
+            questionReaction = models.QuestionReaction(user=random.choice(profiles), is_positive=random.choice([True, False]))
+            answerReaction = models.AnswerReaction(user=random.choice(profiles), is_positive=random.choice([True, False]))
             if random.choice([True, False]):
-                reaction.question = random.choice(questions)
+                questionReaction.question = random.choice(questions)
+                questionReactions.append(questionReaction)
             else:
-                reaction.answer = random.choice(answers)
-            reactions.append(reaction)
-        models.Reaction.objects.bulk_create(reactions)
+                answerReaction.answer = random.choice(answers)
+                answerReactions.append(answerReaction)
+
+        models.AnswerReaction.objects.bulk_create(answerReactions)
+        models.QuestionReaction.objects.bulk_create(questionReactions)
 
         for i, a in enumerate(models.Answer.objects.all()):
             a.countRating()
