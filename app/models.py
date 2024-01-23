@@ -40,6 +40,9 @@ class ProfileManager:
     def mostPopular():
         return Profile.objects.order_by('-rating')[:5]
 
+class AnswerManager(models.Manager):
+    def mostPopular(question):
+        return Answer.objects.filter(question=question).order_by('-is_correct', 'created_at')
 
 class Tag(models.Model):
     name = models.CharField(max_length=40, unique=True)
@@ -82,6 +85,7 @@ class Answer(models.Model):
             is_positive=False, answer=self).count()
         self.rating = likes_count - dislikes_count
 
+    objects = AnswerManager()
 
 class Profile(models.Model):
     avatar = models.ImageField(null=True, default='/users/default-avatar.jpg')

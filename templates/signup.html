@@ -1,46 +1,12 @@
 {%extends "common/base.html"%}
-
+{% load django_bootstrap5 %}
 {% block content %}
-<h2 class="title">Signup</h2>
-<p class="text-danger">Sorry, this email address already registered!</p>
-<form class="col-sm-6">
-  <div class="mb-3">
-    <label for="inputLogin" class="form-label">Login</label>
-    <input
-      type="text"
-      class="form-control"
-      id="inputLogin"
-      placeholder="User"
-    />
-  </div>
-  <div class="mb-3">
-    <label for="inputEmail" class="form-label">Email</label>
-    <input
-      type="email"
-      class="form-control"
-      id="inputEmail"
-      placeholder="name@example.org"
-    />
-  </div>
-  <div class="mb-3">
-    <label for="inputPassword" class="form-label">Password</label>
-    <input type="password" class="form-control" id="inputPassword" />
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label"
-      >Repeat password</label
-    >
-    <input
-      type="password"
-      class="form-control"
-      id="exampleInputPassword1"
-    />
-  </div>
-  <div class="mb-3">
-    <label for="inputFile" class="col-form-label">Upload Avatar</label>
-    <input type="file" class="file-input" id="inputFile" />
-    <div class="invalid-feedback">Invalid file feedback</div>
-  </div>
+<form method="post" action="{% url 'signup' %}" novalidate>
+  <h2 class="title">Signup</h2>
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  <input type="hidden" name="continue" value="{{ request.GET.continue }}" />
+  
   <button type="submit" class="button">Register</button>
   <div class="hint">
       Already have an account? <a href="/login">Log in</a>

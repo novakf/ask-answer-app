@@ -9,7 +9,7 @@ a {
   text-decoration: none;
 }
 
-.header {
+#header {
   display: flex;
   align-items: center;
   position: fixed;
@@ -56,8 +56,9 @@ a {
 
 .user-container {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  width: 300px;
+  width: 320px;
   margin-left: 30px;
   transition: width 0.3s;
   transition: all 0.3s;
@@ -68,6 +69,42 @@ a {
   }
 }
 
+.user-action {
+  display: flex;
+  gap: 10px;
+}
+
+.login-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s;
+  border-radius: 14px;
+  padding: 5px 14px 7px 14px;
+  height: 100%;
+}
+
+.login-btn:hover {
+  background: #efefef;
+}
+
+.signup-btn {
+  background: #0064ff;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #fff;
+  padding: 5px 14px 7px 14px;
+  transition: all 0.2s;
+  height: 100%;
+}
+
+.signup-btn:hover {
+  background: #0042a7;
+}
+
 .button {
   background: #1300bb;
   color: #fff;
@@ -75,23 +112,25 @@ a {
   border-radius: 7px;
   padding: 5px 10px;
   font-size: 16px;
+}
 
-  &:hover {
-    background: #1c2fd6;
-  }
+.button:hover {
+  background: #1c2fd6;
+  color: #fff;
+}
 
-  &:active {
-    background: #2b3ff0;
-  }
+.button:active {
+  background: #2b3ff0;
+  color: #fff;
 }
 
 .avatar-container {
   display: flex;
   align-items: center;
-  border-radius: 50%;
+  border-radius: 23px;
   border: 1px solid #d5d5d5;
-  height: 40px;
-  width: 40px;
+  height: 46px;
+  width: 46px;
   overflow: hidden;
   background: rgb(224, 224, 224);
 }
@@ -115,17 +154,7 @@ a {
   }
 }
 
-.user-action {
-  display: flex;
-  gap: 10px;
-  width: 125px;
-
-  @media (max-width: 575px) {
-    display: none;
-  }
-}
-
-.page-content {
+.content {
   display: flex;
   max-width: 1200px;
   margin: 90px auto 20px auto;
@@ -136,7 +165,7 @@ a {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 716px; 
+  min-height: 716px;
 
   @media (min-width: 575px) {
     width: 70%;
@@ -168,6 +197,14 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+}
+
+.logout {
+  transition: 0.2s;
+}
+
+.logout:hover {
+  color: red;
 }
 
 .tag-button {

@@ -1,8 +1,47 @@
-@import './base.css';
+@import "./base.css";
 
 .login {
   display: flex;
   flex-direction: column;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form label {
+  font-size: 18px;
+}
+
+.form li {
+  font-size: 14px;
+  color: #dc3545;
+}
+
+.form ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.form input {
+  display: block;
+  width: 300px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  margin-bottom: 20px;
+}
+
+input:focus {
+  outline-color: #bbb;
 }
 
 .hint {

@@ -9,6 +9,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  border-top: 2px solid #b5b5b5;
+  padding-top: 30px;
 }
 
 .answer-container {
@@ -26,9 +28,7 @@
 
 .open-question-container {
   display: flex;
-  border-bottom: 2px solid #b5b5b5;
   margin-bottom: 30px;
-  padding-bottom: 30px;
 }
 
 .like-container {
@@ -105,8 +105,8 @@
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
-  align-items: center;
   justify-content: space-between;
+  align-items: stretch;
 }
 
 .answer-answers {

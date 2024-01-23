@@ -1,5 +1,5 @@
 {% extends "common/base.html" %} 
-
+{% load django_bootstrap5 %}
 {% block content %}
 {%load static%}
 <div class="open-question-container">
@@ -51,7 +51,7 @@
       <div class="answer-tags">
         <div class="answer-tags-title">Tags: &nbsp;</div>
         <div class="answer-tags-list">
-          {% for tag in tags %}
+          {% for tag in question.tag.all %}
             <a href="{% url "tag" tag.name %}" class="question-tag">{{ tag.name }}</a>
           {% endfor %}
         </div>
@@ -59,23 +59,25 @@
     </div>
   </div>
 </div>
+{% if answers %}
 <div class="answers-list">
   {% for answer in answers %}
     {% include "common/answerItem.html" %}
   {% endfor %}
 </div>
 {% include "common/pagination.html" with questions=answers %}
+{% endif %}
+
+{% if current_user.username %}
 <div class="ask-form">
-  <form>
-    <div class="mb-3">
-      <textarea
-        class="form-control"
-        id="enterAnswer"
-        placeholder="Enter your answer"
-        rows="3"
-      ></textarea>
-    </div>
-    <input class="button" type="submit" value="Answer" />
+  <form rows="6" action="{% url 'question' question_id=question.id %}" method="post">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      <div class="NewAnswer mt-3 mb-3">
+          <button class="btn btn-primary" type="submit">Answer</button>
+      </div>
   </form>
 </div>
+{% endif %}
+
 {% endblock content %}
