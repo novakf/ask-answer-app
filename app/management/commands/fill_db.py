@@ -46,7 +46,7 @@ class Command(BaseCommand):
 
         questions = []
         for i in range(ratio * 10):
-            question = models.Question(title=fake.sentence(), text=fake.text(), author=random.choice(users))
+            question = models.Question(title=fake.sentence(), text=fake.text(), author=random.choice(profiles))
             questions.append(question)
         models.Question.objects.bulk_create(questions)
 
@@ -64,14 +64,14 @@ class Command(BaseCommand):
                 correct = True
                 used_questions.append(curr_question)
             
-            answer = models.Answer(text=fake.text(), question=curr_question, author=random.choice(users), is_correct=correct)
+            answer = models.Answer(text=fake.text(), question=curr_question, author=random.choice(profiles), is_correct=correct)
             answers.append(answer)
         models.Answer.objects.bulk_create(answers)
         self.stdout.write("ANSWERS COMPLETE\n")
 
         reactions = []
         for i in range(ratio * 200):
-            reaction = models.Reaction(user=random.choice(users), is_positive=random.choice([True, False]))
+            reaction = models.Reaction(user=random.choice(profiles), is_positive=random.choice([True, False]))
             if random.choice([True, False]):
                 reaction.question = random.choice(questions)
             else:

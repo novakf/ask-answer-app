@@ -19,8 +19,11 @@ def index(request):
     page_obj = paginate(questions, request)
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    print(request.user)
-    context = {'questions': page_obj, 'tags': tags, 'best_members': best_users, 'current_user': request.user}
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    else:
+        profile = None
+    context = {'questions': page_obj, 'tags': tags, 'best_members': best_users, 'current_user': profile}
     return render(request, 'index.html', context)
 
 
@@ -34,8 +37,12 @@ def tag(request, tag_name):
     else:
         page_obj = None
     best_users = models.ProfileManager.mostPopular()
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    else:
+        profile = None
     context = {'questions': page_obj, 'tags': tags,
-               'tag': tag_name, 'best_members': best_users, 'current_user': request.user}
+               'tag': tag_name, 'best_members': best_users, 'current_user': profile}
     return render(request, 'tag.html', context)
 
 def question(request, question_id):
@@ -56,8 +63,12 @@ def question(request, question_id):
     question = models.Question.objects.getById(question_id)
     answers = models.AnswerManager.mostPopular(question_id)
     page_obj = paginate(answers, request)
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    else:
+        profile = None
     context = {'question': question, 'answers': page_obj,
-               'tags': tags, 'best_members': best_users, 'current_user': request.user, 'form': answer_form}
+               'tags': tags, 'best_members': best_users, 'current_user': profile, 'form': answer_form}
     return render(request, "question.html", context)
 
 @login_required
@@ -81,7 +92,11 @@ def sign_up(request):
 
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    context = {'tags': tags, 'best_members': best_users, 'form': signup_form, 'current_user': request.user}
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    else:
+        profile = None
+    context = {'tags': tags, 'best_members': best_users, 'form': signup_form, 'current_user': profile}
     return render(request, 'signup.html', context=context)
 
 
@@ -103,7 +118,11 @@ def log_in(request):
 
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    context = {'tags': tags, 'best_members': best_users, 'form': login_form, 'current_user': request.user}
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    else:
+        profile = None
+    context = {'tags': tags, 'best_members': best_users, 'form': login_form, 'current_user': profile}
     return render(request, 'login.html', context=context)
 
 @login_required(login_url='/login', redirect_field_name='continue')
@@ -121,7 +140,11 @@ def settings(request):
             
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    context = {'tags': tags, 'best_members': best_users, 'form': settings_form, 'current_user': request.user}
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    else:
+        profile = None
+    context = {'tags': tags, 'best_members': best_users, 'form': settings_form, 'current_user': profile}
     return render(request, 'settings.html', context=context)
 
 
@@ -136,7 +159,11 @@ def ask(request):
             return redirect('question', question.id)
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    context = {'tags': tags, 'best_members': best_users, 'form': question_form, 'current_user': request.user}
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    else:
+        profile = None
+    context = {'tags': tags, 'best_members': best_users, 'form': question_form, 'current_user': profile}
     return render(request, "ask.html", context)
 
 

@@ -50,6 +50,10 @@ class ProfileEditForm(forms.ModelForm):
         username = self.cleaned_data.get('username')
         email = self.cleaned_data.get('email')
 
+        profile = models.Profile.objects.get(user=user.id)
+        if self.cleaned_data['avatar']:
+            profile.avatar = self.cleaned_data['avatar']
+
         if username:
             user.username = username
 
@@ -57,6 +61,7 @@ class ProfileEditForm(forms.ModelForm):
             user.email = email
 
         user.save()
+        profile.save()
         messages.success(request, 'Profile updated successfully!')
 
 class QuestionForm(forms.ModelForm):
@@ -66,6 +71,7 @@ class QuestionForm(forms.ModelForm):
     
     def save(self, user):
         super().clean()
+        profile = models.Profile.objects.get(user=user)
         tags_names = []
         if self.cleaned_data['tags']:
             tags_names.extend(self.cleaned_data['tags'].split(','))
@@ -79,7 +85,7 @@ class QuestionForm(forms.ModelForm):
                 new_tag.save()
                 tags.append(new_tag)
 
-        new_question = models.Question.objects.create(author=user,
+        new_question = models.Question.objects.create(author=profile,
                                         title=self.cleaned_data['title'],
                                         text=self.cleaned_data['text'])
         new_question.tag.set(tags)
@@ -98,7 +104,8 @@ class AnswerForm(forms.Form):
         self.fields['answer'].label = ''
 
     def save(self, request, question_id):
-        user = models.User.objects.get(username=request.user)
+        user = models.Profile.objects.get(user=request.user)
+
         question = models.Question.objects.get(id=question_id)
         answer = self.cleaned_data['answer']
       

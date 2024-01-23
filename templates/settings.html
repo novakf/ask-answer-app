@@ -2,7 +2,7 @@
 {% load django_bootstrap5 %}
 {% block content %}
 <form method="post" action="{% url 'settings' %}" novalidate>
-  <h2 class="title">Settings: {{ current_user }}</h2>
+  <h2 class="title">Settings: {{ current_user.user }}</h2>
   {% csrf_token %}
   {% bootstrap_form form %}
   <button type="submit" class="button">Save</button>

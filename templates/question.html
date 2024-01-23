@@ -68,7 +68,7 @@
 {% include "common/pagination.html" with questions=answers %}
 {% endif %}
 
-{% if current_user.username %}
+{% if current_user.user.username %}
 <div class="ask-form">
   <form rows="6" action="{% url 'question' question_id=question.id %}" method="post">
       {% csrf_token %}

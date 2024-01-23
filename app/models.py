@@ -3,6 +3,22 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 from django.core.exceptions import ObjectDoesNotExist
 
+class ProfileManager:
+    def mostPopular():
+        return Profile.objects.order_by('-rating')[:5]
+
+class Profile(models.Model):
+    avatar = models.ImageField(null=True, default='/users/default-avatar.jpg')
+    rating = models.IntegerField(null=True, default=0)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+
+    objects = ProfileManager()
+
+    def countRating(self):
+        answers_count = Answer.objects.filter(author=self).count()
+        self.rating = answers_count
+
 class QuestionManager(models.Manager):
     def getById(self, id):
         question = Question.objects.annotate(answers_count=Count('answer')).get(id=id)
@@ -35,11 +51,6 @@ class TagManager:
     def mostPopular():
         return Tag.objects.annotate(num_questions=Count('question')).order_by('-num_questions')[:7]
 
-
-class ProfileManager:
-    def mostPopular():
-        return Profile.objects.order_by('-rating')[:5]
-
 class AnswerManager(models.Manager):
     def mostPopular(question):
         return Answer.objects.filter(question=question).order_by('-is_correct', 'created_at')
@@ -56,7 +67,7 @@ class Question(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     rating = models.IntegerField(null=True, default=0)
 
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
     tag = models.ManyToManyField(Tag)
 
     objects = QuestionManager()
@@ -76,7 +87,7 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
     def countRating(self):
         likes_count = Reaction.objects.filter(
@@ -87,22 +98,9 @@ class Answer(models.Model):
 
     objects = AnswerManager()
 
-class Profile(models.Model):
-    avatar = models.ImageField(null=True, default='/users/default-avatar.jpg')
-    rating = models.IntegerField(null=True, default=0)
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-
-    objects = ProfileManager()
-
-    def countRating(self):
-        answers_count = Answer.objects.filter(author=self.user).count()
-        self.rating = answers_count
-
-
 class Reaction(models.Model):
     is_positive = models.BooleanField(default=False)
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)

@@ -36,14 +36,14 @@
       />
       <a href="{% url "ask" %}" class='button' style="margin-left: 15px;">ASK</a>
       <div class="user-container">
-        {% if current_user.username %}
+        {% if current_user %}
         <a href="">
           <div class="avatar-container">
             <img class="avatar" src="{% static "assets/default-avatar.jpg" %}" />
           </div></a
         >
         <div class="user-info">
-          <div class="user-name">{{ current_user.username }}</div>
+          <div class="user-name">{{ current_user.user.username }}</div>
           <div class="user-action">
             <a href="/settings">Settings</a>
             <a href="{% url "logout" %}" class="logout">Log out</a>
