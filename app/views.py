@@ -50,9 +50,11 @@ def question(request, question_id):
                'tags': tags, 'best_members': best_users, 'current_user': request.user}
     return render(request, "question.html", context)
 
+@login_required
 def log_out(request):
     logout(request)
-    return redirect(reverse('index'))
+    return redirect(request.META.get('HTTP_REFERER'))
+
 
 def sign_up(request):
     if request.method == "GET":
@@ -115,10 +117,17 @@ def settings(request):
 
 @login_required(login_url='/login', redirect_field_name='continue')
 def ask(request):
+    if request.method == 'GET':
+        question_form = forms.QuestionForm()
+    if request.method == 'POST':
+        question_form = forms.QuestionForm(request.POST)
+        if question_form.is_valid():
+            question = question_form.save(request.user)
+            return redirect('question', question.id)
     tags = models.TagManager.mostPopular()
     best_users = models.ProfileManager.mostPopular()
-    context = {'tags': tags, 'best_members': best_users, 'current_user': request.user}
-    return render(request, 'ask.html', context=context)
+    context = {'tags': tags, 'best_members': best_users, 'form': question_form, 'current_user': request.user}
+    return render(request, "ask.html", context)
 
 
 def paginate(objects_list, request, per_page=5):

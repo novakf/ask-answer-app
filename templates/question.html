@@ -59,12 +59,14 @@
     </div>
   </div>
 </div>
+{% if answers %}
 <div class="answers-list">
   {% for answer in answers %}
     {% include "common/answerItem.html" %}
   {% endfor %}
 </div>
 {% include "common/pagination.html" with questions=answers %}
+{% endif %}
 
 {% if current_user.username %}
 <div class="ask-form">

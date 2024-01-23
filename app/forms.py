@@ -56,3 +56,33 @@ class ProfileEditForm(forms.ModelForm):
 
         user.save()
         messages.success(request, 'Profile updated successfully!')
+
+class QuestionForm(forms.ModelForm):
+    title = forms.CharField(max_length=50)
+    text = forms.CharField(max_length=500, widget=forms.Textarea)
+    tags = forms.CharField(required=False)
+    
+    def save(self, user):
+        super().clean()
+        tags_names = []
+        if self.cleaned_data['tags']:
+            tags_names.extend(self.cleaned_data['tags'].split(','))
+
+        tags = []
+        for tag_name in tags_names:
+            if models.Tag.objects.filter(name=tag_name).exists():
+                tags.append(models.Tag.objects.get(name=tag_name))
+            else:
+                new_tag = models.Tag(name=tag_name)
+                new_tag.save()
+                tags.append(new_tag)
+
+        new_question = models.Question.objects.create(author=user,
+                                        title=self.cleaned_data['title'],
+                                        text=self.cleaned_data['text'])
+        new_question.tag.set(tags)
+        return new_question
+
+    class Meta:
+        model = models.Question
+        fields = ['title', 'text', 'tags']
