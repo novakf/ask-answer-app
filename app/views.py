@@ -132,10 +132,9 @@ def settings(request):
     if request.method == "GET":
       settings_form = forms.ProfileEditForm(initial=data)
     if request.method == "POST":
-      settings_form = forms.ProfileEditForm(request.POST)
+      settings_form = forms.ProfileEditForm(request.POST, request.FILES)
       if settings_form.is_valid():
             user = settings_form.save(request)
-            print(user)
             return redirect(reverse('settings'))
             
     tags = models.TagManager.mostPopular()

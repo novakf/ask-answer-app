@@ -8,7 +8,7 @@ class ProfileManager:
         return Profile.objects.order_by('-rating')[:5]
 
 class Profile(models.Model):
-    avatar = models.ImageField(null=True, default='/users/default-avatar.jpg')
+    avatar = models.ImageField(null=True, default='default-avatar.jpg')
     rating = models.IntegerField(null=True, default=0)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
