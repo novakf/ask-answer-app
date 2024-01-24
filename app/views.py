@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,7 @@ from app import forms
 from django.contrib.auth.models import User
 from . import models
 import re
+import json
 
 def index(request):
     filter_param = request.GET.get('tab')
@@ -23,7 +24,9 @@ def index(request):
       profile = models.Profile.objects.get(user=request.user.id)
     else:
         profile = None
-    context = {'questions': page_obj, 'tags': tags, 'best_members': best_users, 'current_user': profile}
+    like_reactions = models.QuestionReaction.objects.filter(user=profile, is_positive=True).values_list('question', flat=True)
+    dislike_reactions = models.QuestionReaction.objects.filter(user=profile, is_positive=False).values_list('question', flat=True)
+    context = {'questions': page_obj, 'tags': tags, 'best_members': best_users, 'current_user': profile, 'like_reactions': like_reactions, 'dislike_reactions': dislike_reactions}
     return render(request, 'index.html', context)
 
 
@@ -67,8 +70,12 @@ def question(request, question_id):
       profile = models.Profile.objects.get(user=request.user.id)
     else:
         profile = None
+    question_like_reactions = models.QuestionReaction.objects.filter(user=profile, is_positive=True).values_list('question', flat=True)
+    question_dislike_reactions = models.QuestionReaction.objects.filter(user=profile, is_positive=False).values_list('question', flat=True)
+    answer_like_reactions = models.AnswerReaction.objects.filter(user=profile, is_positive=True).values_list('answer', flat=True)
+    answer_dislike_reactions = models.AnswerReaction.objects.filter(user=profile, is_positive=False).values_list('answer', flat=True)
     context = {'question': question, 'answers': page_obj,
-               'tags': tags, 'best_members': best_users, 'current_user': profile, 'form': answer_form}
+               'tags': tags, 'best_members': best_users, 'current_user': profile, 'form': answer_form, 'question_like_reactions': question_like_reactions, 'question_dislike_reactions': question_dislike_reactions, 'answer_like_reactions': answer_like_reactions, 'answer_dislike_reactions': answer_dislike_reactions}
     return render(request, "question.html", context)
 
 @login_required
@@ -165,6 +172,108 @@ def ask(request):
     context = {'tags': tags, 'best_members': best_users, 'form': question_form, 'current_user': profile}
     return render(request, "ask.html", context)
 
+@login_required(login_url='/login')
+@csrf_protect
+def handleQuestionReaction(request):
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    body = request.body.decode('utf-8')
+    body_decoded = json.loads(body)  # Парсинг JSON
+
+    object_id = body_decoded.get('object_id')
+    operationType = body_decoded.get('operation')
+
+    try:
+        q = models.Question.objects.get(id=object_id)
+    except models.Question.DoesNotExist:
+        return JsonResponse({
+            "status": 502,
+            "needAddReaction": False,
+            "message": "Object question does not exits"
+        })
+    if operationType == "L":
+        queryset = models.QuestionReaction.objects.filter(user=profile, question=q, is_positive=True)
+    else:
+        queryset = models.QuestionReaction.objects.filter(user=profile, question=q, is_positive=False)
+
+    reaction_exist = queryset.exists()
+
+    if reaction_exist:
+        queryset.delete()
+        needAddReaction = False
+    else:
+        if operationType == "L":
+            models.QuestionReaction.objects.create(user=profile, question=q, is_positive=True)
+        else:
+            models.QuestionReaction.objects.create(user=profile, question=q, is_positive=False)
+        needAddReaction = True
+    q.countRating()
+    q.save()
+    return JsonResponse({
+         "status": 200,
+         "needAddReaction": needAddReaction,
+         "message": "Operation has finished successful!"
+     })
+
+@login_required(login_url='/login')
+@csrf_protect
+def handleAnswerReaction(request):
+    if request.user.is_authenticated:
+      profile = models.Profile.objects.get(user=request.user.id)
+    body = request.body.decode('utf-8')
+    body_decoded = json.loads(body)  # Парсинг JSON
+
+    object_id = body_decoded.get('object_id')
+    operationType = body_decoded.get('operation')
+
+    try:
+        a = models.Answer.objects.get(id=object_id)
+    except models.Answer.DoesNotExist:
+        return JsonResponse({
+            "status": 502,
+            "needAddReaction": False,
+            "message": "Object answer does not exist"
+        })
+    if operationType == "L":
+        queryset = models.AnswerReaction.objects.filter(user=profile, answer=a, is_positive=True)
+    else:
+        queryset = models.AnswerReaction.objects.filter(user=profile, answer=a, is_positive=False)
+
+    reaction_exist = queryset.exists()
+    if reaction_exist:
+        queryset.delete()
+        needAddReaction = False
+    else:
+        if operationType == "L":
+            models.AnswerReaction.objects.create(user=profile, answer=a, is_positive=True)
+        else:
+            models.AnswerReaction.objects.create(user=profile, answer=a, is_positive=False)
+        needAddReaction = True
+    a.countRating()
+    a.save()
+    return JsonResponse({
+        "status": 200,
+        "needAddReaction": needAddReaction,
+        "message": "Operation has finished successful!"
+    })
+
+@login_required
+def react_question(request):
+    id = request.POST.get('question_id')
+    react_type = request.POST.get('type')
+    question = models.Question.objects.getById(id)
+    profile = models.Profile.objects.get(user=request.user.id)
+    rating = models.QuestionReaction.objects.toggle_reaction(user=profile, question=question, reactType=react_type)
+    return JsonResponse({ 'count': rating })
+
+@login_required
+def react_answer(request):
+    id = request.POST.get('answer_id')
+    react_type = request.POST.get('type')
+    answer = models.Answer.objects.getById(id)
+    profile = models.Profile.objects.get(user=request.user.id)
+    rating = models.AnswerReaction.objects.toggle_reaction(user=profile, answer=answer, reactType=react_type)
+    return JsonResponse({ 'count': rating })
 
 def paginate(objects_list, request, per_page=5):
     paginator = Paginator(objects_list, per_page)
