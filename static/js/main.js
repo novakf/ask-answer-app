@@ -5,7 +5,7 @@ const answerReactions = document.getElementsByClassName(
   "reaction-container-answer"
 );
 
-const addReactQuestion = (btn, countEl, id, type) => {
+const addReactQuestion = (like, dislike, countEl, id, type) => {
   const formData = new FormData();
   formData.append("question_id", id);
   formData.append("type", type);
@@ -18,13 +18,24 @@ const addReactQuestion = (btn, countEl, id, type) => {
   fetch(request)
     .then((res) => res.json())
     .then((data) => {
+      if (type == "like" && countEl.innerHTML > data.count)
+        like.src = "/static/svg/like.svg";
+      if (type == "like" && countEl.innerHTML < data.count) {
+        like.src = "/static/svg/like_clicked.svg";
+        dislike.src = "/static/svg/dislike.svg";
+      }
+      if (type == "dislike" && countEl.innerHTML < data.count)
+        dislike.src = "/static/svg/dislike.svg";
+      if (type == "dislike" && countEl.innerHTML > data.count) {
+        dislike.src = "/static/svg/dislike_clicked.svg";
+        like.src = "/static/svg/like.svg";
+      }
+
       countEl.innerHTML = data.count;
-      btn.style.style = "stroke: blue";
-      btn.style.fill = "blue";
     });
 };
 
-const addReactAnswer = (countEl, id, type) => {
+const addReactAnswer = (like, dislike, countEl, id, type) => {
   const formData = new FormData();
   formData.append("answer_id", id);
   formData.append("type", type);
@@ -37,7 +48,19 @@ const addReactAnswer = (countEl, id, type) => {
   fetch(request)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
+      if (type == "like" && countEl.innerHTML > data.count)
+        like.src = "/static/svg/like.svg";
+      if (type == "like" && countEl.innerHTML < data.count) {
+        like.src = "/static/svg/like_clicked.svg";
+        dislike.src = "/static/svg/dislike.svg";
+      }
+      if (type == "dislike" && countEl.innerHTML < data.count)
+        dislike.src = "/static/svg/dislike.svg";
+      if (type == "dislike" && countEl.innerHTML > data.count) {
+        dislike.src = "/static/svg/dislike_clicked.svg";
+        like.src = "/static/svg/like.svg";
+      }
+
       countEl.innerHTML = data.count;
     });
 };
@@ -48,13 +71,14 @@ if (questionReactions.length) {
     let like = reaction.children[0];
     let count = reaction.children[1];
     let dislike = reaction.children[2];
-    path = like.children[0].children[0];
+    let likeImg = like.children[0];
+    let dislikeImg = dislike.children[0];
     let questionId = reaction.getAttribute("question-id");
     like.addEventListener("click", () => {
-      addReactQuestion(path, count, questionId, "like");
+      addReactQuestion(likeImg, dislikeImg, count, questionId, "like");
     });
     dislike.addEventListener("click", () => {
-      addReactQuestion(path, count, questionId, "dislike");
+      addReactQuestion(likeImg, dislikeImg, count, questionId, "dislike");
     });
   }
 }
@@ -65,12 +89,14 @@ if (answerReactions.length) {
     let like = reaction.children[0];
     let count = reaction.children[1];
     let dislike = reaction.children[2];
+    let likeImg = like.children[0];
+    let dislikeImg = dislike.children[0];
     let answerId = reaction.getAttribute("answer-id");
     like.addEventListener("click", () => {
-      addReactAnswer(count, answerId, "like");
+      addReactAnswer(likeImg, dislikeImg, count, answerId, "like");
     });
     dislike.addEventListener("click", () => {
-      addReactAnswer(count, answerId, "dislike");
+      addReactAnswer(likeImg, dislikeImg, count, answerId, "dislike");
     });
   }
 }
