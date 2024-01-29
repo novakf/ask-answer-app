@@ -24,7 +24,15 @@
   }
 }
 
-.like-container {
+.reaction-container-question {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.reaction-container-answer {
   display: flex;
   flex-direction: column;
   margin-top: 5px;
@@ -73,9 +81,16 @@
   box-orient: vertical;
 }
 
-.like-button {
+.like-button, .dislike-button {
+  display: flex;
+  background: transparent;
+  border: none;
   cursor: pointer;
   transition: transform 0.3s;
+  border-radius: 12px;
+  padding: 0;
+  height: 24px;
+  width: 24px;
 
   &:hover {
     transform: scale(1.1);

@@ -28,7 +28,7 @@ class RegistrationForm(forms.ModelForm):
     def save(self, **kwargs):
         self.cleaned_data.pop('password_check')
         user = models.User.objects.create_user(**self.cleaned_data)
-        models.Profile.objects.create(user=user, avatar='users/default-avatar.jpg')
+        models.Profile.objects.create(user=user, avatar='default-avatar.jpg')
         return user
     
 class ProfileEditForm(forms.ModelForm):
@@ -43,6 +43,9 @@ class ProfileEditForm(forms.ModelForm):
         fields = ['username', 'email', 'avatar']
 
     def clean(self):
+        username = self.cleaned_data.get('username')
+        if models.User.objects.filter(username=username).count() > 1:
+            raise forms.ValidationError("This username already in use.")
         return
 
     def save(self, request):
@@ -51,8 +54,10 @@ class ProfileEditForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
 
         profile = models.Profile.objects.get(user=user.id)
-        if self.cleaned_data['avatar']:
-            profile.avatar = self.cleaned_data['avatar']
+        
+        if self.cleaned_data.get('avatar'):
+            print(self.cleaned_data.get('avatar'))
+            profile.avatar = self.cleaned_data.get('avatar')
 
         if username:
             user.username = username

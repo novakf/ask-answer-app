@@ -8,7 +8,7 @@ class ProfileManager:
         return Profile.objects.order_by('-rating')[:5]
 
 class Profile(models.Model):
-    avatar = models.ImageField(null=True, default='/users/default-avatar.jpg')
+    avatar = models.ImageField(null=True, default='default-avatar.jpg')
     rating = models.IntegerField(null=True, default=0)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
@@ -45,8 +45,7 @@ class QuestionManager(models.Manager):
 
     def countQuestions(self):
         return self.count()
-
-
+        
 class TagManager:
     def mostPopular():
         return Tag.objects.annotate(num_questions=Count('question')).order_by('-num_questions')[:7]
@@ -54,12 +53,14 @@ class TagManager:
 class AnswerManager(models.Manager):
     def mostPopular(question):
         return Answer.objects.filter(question=question).order_by('-is_correct', 'created_at')
+    def getById(self, id):
+        answer = Answer.objects.get(id=id)
+        return answer
 
 class Tag(models.Model):
     name = models.CharField(max_length=40, unique=True)
 
     objects = TagManager()
-
 
 class Question(models.Model):
     title = models.CharField(max_length=255, unique=False)
@@ -73,9 +74,9 @@ class Question(models.Model):
     objects = QuestionManager()
 
     def countRating(self):
-        likes_count = Reaction.objects.filter(
+        likes_count = QuestionReaction.objects.filter(
             is_positive=True, question=self).count()
-        dislikes_count = Reaction.objects.filter(
+        dislikes_count = QuestionReaction.objects.filter(
             is_positive=False, question=self).count()
         self.rating = likes_count - dislikes_count
 
@@ -90,17 +91,80 @@ class Answer(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
     def countRating(self):
-        likes_count = Reaction.objects.filter(
+        likes_count = AnswerReaction.objects.filter(
             is_positive=True, answer=self).count()
-        dislikes_count = Reaction.objects.filter(
+        dislikes_count = AnswerReaction.objects.filter(
             is_positive=False, answer=self).count()
         self.rating = likes_count - dislikes_count
 
     objects = AnswerManager()
 
-class Reaction(models.Model):
-    is_positive = models.BooleanField(default=False)
+class AnswerReactionManager(models.Manager):
+    def toggle_reaction(self, user, answer, reactType):
+        if AnswerReaction.objects.filter(user=user, answer=answer).exists():
+            reaction = AnswerReaction.objects.get(user=user, answer=answer)
+            if reactType == 'like' and reaction.is_positive == False:
+              reaction.is_positive = True
+              reaction.save()
+            elif reactType == 'dislike' and reaction.is_positive == True:
+              reaction.is_positive = False
+              reaction.save()
+            else:
+              AnswerReaction.objects.filter(user=user, answer=answer).delete()
+        else:
+            if reactType == 'like':
+              AnswerReaction.objects.create(user=user, answer=answer, is_positive=True)
+            else:
+              AnswerReaction.objects.create(user=user, answer=answer, is_positive=False)
+        answer = Answer.objects.get(id=answer.id)
+        answer.countRating()
+        answer.save()
+        return answer.rating
+
+class AnswerReaction(models.Model):
+    is_positive = models.BooleanField(default=True)
 
     user = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['answer', 'user'], name='unique_answer_reaction')
+        ]
+
+    objects = AnswerReactionManager()
+
+class QuestionReactionManager(models.Manager):
+    def toggle_reaction(self, user, question, reactType):
+        if QuestionReaction.objects.filter(user=user, question=question).exists():
+            reaction = QuestionReaction.objects.get(user=user, question=question)
+            if reactType == 'like' and reaction.is_positive == False:
+              reaction.is_positive = True
+              reaction.save()
+            elif reactType == 'dislike' and reaction.is_positive == True:
+              reaction.is_positive = False
+              reaction.save()
+            else:
+              QuestionReaction.objects.filter(user=user, question=question).delete()
+        else:
+            if reactType == 'like':
+              QuestionReaction.objects.create(user=user, question=question, is_positive=True)
+            else:
+              QuestionReaction.objects.create(user=user, question=question, is_positive=False)
+        question = Question.objects.get(id=question.id)
+        question.countRating()
+        question.save()
+        return question.rating
+
+class QuestionReaction(models.Model):
+    is_positive = models.BooleanField(default=True)
+
+    user = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['question', 'user'], name='unique_question_reaction')
+        ]
+
+    objects = QuestionReactionManager()

@@ -14,4 +14,6 @@ urlpatterns = [
     path('tag/<str:tag_name>/', views.tag, name="tag"),
     path('settings/', views.settings, name="settings"),
     path('admin/', admin.site.urls),
+    path('question/like', views.react_question, name='question-like'),
+    path('answer/like', views.react_answer, name='asnwer-like')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

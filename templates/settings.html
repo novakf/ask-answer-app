@@ -1,10 +1,15 @@
 {% extends "common/base.html" %}
 {% load django_bootstrap5 %}
 {% block content %}
-<form method="post" action="{% url 'settings' %}" novalidate>
+<form method="post" action="{% url 'settings' %}" novalidate enctype="multipart/form-data">
   <h2 class="title">Settings: {{ current_user.user }}</h2>
   {% csrf_token %}
   {% bootstrap_form form %}
+
+  <div style="width: 200px;">
+    <img src={{ current_user.avatar.url }} class="w-100" style="margin-bottom: 20px;"/>
+  </div>
+
   <button type="submit" class="button">Save</button>
 </form>
 {% endblock content %}
